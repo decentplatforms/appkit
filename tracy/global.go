@@ -21,7 +21,7 @@ func Use(log Logger) {
 }
 
 func Log(level LogLevel, message string, props ...Prop) error {
-	if active != nil {
+	if active == nil {
 		return NoActiveLoggerError
 	}
 	return active.Log(level, message, props...)
