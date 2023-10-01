@@ -81,7 +81,7 @@ func (conf SyslogConfig) withDefaults() SyslogConfig {
 //   - Structured Data is -. Support for this field is planned.
 func Syslog5424Format(conf SyslogConfig) tracy.Formatter {
 	conf = conf.withDefaults()
-	return func(level tracy.LogLevel, msg string, props tracy.Props) string {
+	return func(level tracy.LogLevel, msg string, props *tracy.Props) string {
 		var timestamp, hostname, appname, msgid, structured string
 		var facility, pri, version, pid int
 		var ok bool
@@ -132,7 +132,7 @@ func Syslog5424Format(conf SyslogConfig) tracy.Formatter {
 // Spare props are appended to MSG as JSON.
 func Syslog3164Format(conf SyslogConfig) tracy.Formatter {
 	conf = conf.withDefaults()
-	return func(level tracy.LogLevel, msg string, props tracy.Props) string {
+	return func(level tracy.LogLevel, msg string, props *tracy.Props) string {
 		var timestamp, hostname, tag string
 		var facility, pri int
 		var ok bool
