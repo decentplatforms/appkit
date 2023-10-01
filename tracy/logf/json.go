@@ -46,7 +46,7 @@ func (conf JSONConfig) withDefaults() JSONConfig {
 }
 
 func JSONFormat(conf JSONConfig) tracy.Formatter {
-	return func(level tracy.LogLevel, msg string, props tracy.Props) string {
+	return func(level tracy.LogLevel, msg string, props *tracy.Props) string {
 		raw, _ := json.Marshal(jsonLog{
 			Level:     level,
 			LevelStr:  level.String(),
@@ -59,7 +59,7 @@ func JSONFormat(conf JSONConfig) tracy.Formatter {
 }
 
 func JSONPrettyFormat(conf JSONConfig) tracy.Formatter {
-	return func(level tracy.LogLevel, msg string, props tracy.Props) string {
+	return func(level tracy.LogLevel, msg string, props *tracy.Props) string {
 		raw, _ := json.MarshalIndent(jsonLog{
 			Level:     level,
 			LevelStr:  level.String(),

@@ -22,7 +22,7 @@ import (
 )
 
 // Syslog3164 returns a logger that logs to output with max level max and default level def.
-// Uses tag as the default tag; can be changed on a per-message basis using Props.
+// Uses tag as the default tag; can be changed on a per-message basis using*Props.
 func Syslog3164(tag string, timeDetail bool, max, def tracy.LogLevel, output io.Writer) tracy.Logger {
 	logger, _ := tracy.NewLogger(tracy.Config{
 		MaxLevel:     max,
@@ -37,7 +37,7 @@ func Syslog3164(tag string, timeDetail bool, max, def tracy.LogLevel, output io.
 }
 
 // Syslog5424 returns a logger that logs to output with max level max and default level def.
-// Uses app and msgid as defaults for those values; can be changed on a per-message basis using Props.
+// Uses app and msgid as defaults for those values; can be changed on a per-message basis using*Props.
 func Syslog5424(app, msgid string, max, def tracy.LogLevel, output io.Writer) tracy.Logger {
 	logger, _ := tracy.NewLogger(tracy.Config{
 		MaxLevel:     max,
