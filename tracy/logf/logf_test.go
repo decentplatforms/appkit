@@ -117,7 +117,7 @@ func TestLogger(t *testing.T) {
 	})
 	t.Run("syslog logger", func(t *testing.T) {
 		for name, format := range syslog_formats {
-			hostname := "jnichols@debbie"
+			hostname := "testhost"
 			appname := "some-other-app"
 			msgid := "testing"
 			tw := &TestWriter{}

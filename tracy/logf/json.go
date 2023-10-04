@@ -52,7 +52,7 @@ func JSONFormat(conf JSONConfig) tracy.Formatter {
 			LevelStr:  level.String(),
 			Timestamp: time.Now().UTC().Format(time.RFC3339),
 			Message:   msg,
-			Props:     props.AllMap(),
+			Props:     props.Map(),
 		})
 		return string(raw)
 	}
@@ -65,7 +65,7 @@ func JSONPrettyFormat(conf JSONConfig) tracy.Formatter {
 			LevelStr:  level.String(),
 			Timestamp: time.Now().UTC().Format(time.RFC3339),
 			Message:   msg,
-			Props:     props.AllMap(),
+			Props:     props.Map(),
 		}, conf.Prefix, conf.Indent)
 		return string(raw)
 	}
