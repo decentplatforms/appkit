@@ -17,8 +17,6 @@ package logf
 import (
 	"errors"
 	"fmt"
-	"io"
-	"os"
 	"testing"
 
 	"github.com/decentplatforms/appkit/tracy"
@@ -86,13 +84,11 @@ func TestLogger(t *testing.T) {
 	t.Run("with props", func(t *testing.T) {
 		for name, format := range formats {
 			tw := &TestWriter{}
-			iow := os.Stdout
-			w := io.MultiWriter(tw, iow)
 			conf := tracy.Config{
 				MaxLevel:     tracy.Warning,
 				DefaultLevel: tracy.Informational,
 				Format:       format,
-				Output:       w,
+				Output:       tw,
 			}
 			props := []tracy.Prop{{Name: "prop1", Value: "hello world"}, {Name: "prop2", Value: 100}, {Name: "prop3", Value: []string{"hello", "world"}}}
 			t.Run(name+" format", func(t *testing.T) {
@@ -116,7 +112,6 @@ func TestLogger(t *testing.T) {
 					}
 					tw.Last = ""
 				}
-				t.Fail()
 			})
 		}
 	})
