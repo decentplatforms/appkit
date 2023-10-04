@@ -41,12 +41,33 @@ const (
 //   - Tag is used as MSGID in 5424
 //   - UseISO8601 only applies to RFC 3164; rfc5424 specifies RFC3339 time
 //   - You may not set Facility to 0
+//   - WithProps uses logf.SyslogJSON by default.
 type SyslogConfig struct {
 	Hostname   string
 	AppName    string
 	Tag        string
 	Facility   int
 	UseISO8601 bool
+	WithProps  func(string, *tracy.Props) string
+}
+
+// SyslogJSON is an option for SyslogConfig.WithProps.
+// It appends spare props as JSON to the syslog message.
+func SyslogJSON(msg string, props *tracy.Props) string {
+	spareProps := props.Map()
+	if len(spareProps) > 0 {
+		raw, err := json.Marshal(spareProps)
+		if err == nil {
+			msg = msg + " " + string(raw)
+		}
+	}
+	return msg
+}
+
+// SyslogIgnore is an option for SyslogConfig.WithProps.
+// It ignores spare props, leaving the message as-is.
+func SyslogIgnore(msg string, props *tracy.Props) string {
+	return msg
 }
 
 func (conf SyslogConfig) withDefaults() SyslogConfig {
@@ -66,6 +87,9 @@ func (conf SyslogConfig) withDefaults() SyslogConfig {
 	}
 	if conf.Facility == 0 {
 		conf.Facility = 1
+	}
+	if conf.WithProps == nil {
+		conf.WithProps = SyslogJSON
 	}
 	return conf
 }
@@ -112,13 +136,7 @@ func Syslog5424Format(conf SyslogConfig) tracy.Formatter {
 		pid = os.Getpid()
 
 		props.Delete(SYSLOG_HOSTNAME, SYSLOG_APPNAME, SYSLOG_TAG)
-		spareProps := props.Map()
-		if len(spareProps) > 0 {
-			raw, err := json.Marshal(spareProps)
-			if err == nil {
-				msg = msg + " " + string(raw)
-			}
-		}
+		conf.WithProps(msg, props)
 
 		return fmt.Sprintf("<%d>%d %s %s %s %d %s %s %s", pri, version, timestamp, hostname, appname, pid, msgid, structured, msg)
 	}
@@ -158,13 +176,7 @@ func Syslog3164Format(conf SyslogConfig) tracy.Formatter {
 		pri = 8*facility + int(level)
 
 		props.Delete(SYSLOG_HOSTNAME, SYSLOG_APPNAME, SYSLOG_TAG)
-		spareProps := props.Map()
-		if len(spareProps) > 0 {
-			raw, err := json.Marshal(spareProps)
-			if err == nil {
-				msg = msg + " " + string(raw)
-			}
-		}
+		conf.WithProps(msg, props)
 
 		return fmt.Sprintf("<%d>%s %s %s: %s", pri, timestamp, hostname, tag, msg)
 	}
