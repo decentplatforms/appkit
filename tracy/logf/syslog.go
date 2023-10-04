@@ -111,7 +111,8 @@ func Syslog5424Format(conf SyslogConfig) tracy.Formatter {
 		version = 1
 		pid = os.Getpid()
 
-		spareProps := props.AllMap(SYSLOG_HOSTNAME, SYSLOG_APPNAME, SYSLOG_TAG)
+		props.Delete(SYSLOG_HOSTNAME, SYSLOG_APPNAME, SYSLOG_TAG)
+		spareProps := props.Map()
 		if len(spareProps) > 0 {
 			raw, err := json.Marshal(spareProps)
 			if err == nil {
@@ -156,7 +157,8 @@ func Syslog3164Format(conf SyslogConfig) tracy.Formatter {
 
 		pri = 8*facility + int(level)
 
-		spareProps := props.AllMap(SYSLOG_HOSTNAME, SYSLOG_APPNAME, SYSLOG_TAG)
+		props.Delete(SYSLOG_HOSTNAME, SYSLOG_APPNAME, SYSLOG_TAG)
+		spareProps := props.Map()
 		if len(spareProps) > 0 {
 			raw, err := json.Marshal(spareProps)
 			if err == nil {

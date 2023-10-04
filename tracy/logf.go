@@ -15,7 +15,6 @@
 package tracy
 
 import (
-	"slices"
 	"strings"
 	"sync"
 )
@@ -76,25 +75,23 @@ func (props *Props) Set(name string, value any) {
 	props.props = append(props.props, Prop{name, value})
 }
 
-// Without returns a copy of props without any of the provided names.
-func (props *Props) All(except ...string) []Prop {
-	newProps := make([]Prop, 0, len(props.props))
-	for _, origProp := range props.props {
-		if !slices.Contains(except, origProp.Name) {
-			newProps = append(newProps, origProp)
-		}
+// Delete removes the specified keys from props.
+// This doesn't clear the data from memory, but removes its hash value so that it cannot be accessed
+// through Get/Map.
+func (props *Props) Delete(propNames ...string) {
+	for _, name := range propNames {
+		delete(props.hash, name)
 	}
-	return newProps
 }
 
-func (props *Props) AllMap(except ...string) map[string]any {
-	newProps := make(map[string]any, len(props.props))
-	for _, origProp := range props.props {
-		if !slices.Contains(except, origProp.Name) {
-			newProps[origProp.Name] = origProp.Value
-		}
+// Map returns a map of key-value pairs.
+func (props *Props) Map() map[string]any {
+	propsMap := make(map[string]any, len(props.props))
+	for _, idx := range props.hash {
+		prop := props.props[idx]
+		propsMap[prop.Name] = prop.Value
 	}
-	return newProps
+	return propsMap
 }
 
 func (props *Props) Return() {
