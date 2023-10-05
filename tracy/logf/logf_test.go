@@ -17,6 +17,8 @@ package logf
 import (
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"testing"
 
 	"github.com/decentplatforms/appkit/tracy"
@@ -45,6 +47,14 @@ var formats = map[string]tracy.Formatter{
 var syslog_formats = map[string]tracy.Formatter{
 	"syslog_rfc3164": Syslog3164Format(SyslogConfig{}),
 	"syslog_rfc5424": Syslog5424Format(SyslogConfig{}),
+}
+
+func testProps() []tracy.Prop {
+	return []tracy.Prop{
+		tracy.String("property", "value"),
+		tracy.Int("num1", 1),
+		tracy.Float("num2", 2.0),
+	}
 }
 
 func TestLogger(t *testing.T) {
@@ -84,13 +94,13 @@ func TestLogger(t *testing.T) {
 	t.Run("with props", func(t *testing.T) {
 		for name, format := range formats {
 			tw := &TestWriter{}
+			w := io.MultiWriter(tw, os.Stdout)
 			conf := tracy.Config{
 				MaxLevel:     tracy.Warning,
 				DefaultLevel: tracy.Informational,
 				Format:       format,
-				Output:       tw,
+				Output:       w,
 			}
-			props := []tracy.Prop{{Name: "prop1", Value: "hello world"}, {Name: "prop2", Value: 100}, {Name: "prop3", Value: []string{"hello", "world"}}}
 			t.Run(name+" format", func(t *testing.T) {
 				conf.Format = format
 				log, err := tracy.NewLogger(conf)
@@ -100,9 +110,9 @@ func TestLogger(t *testing.T) {
 				for i := tracy.MOST_SEVERE; i < tracy.LEAST_SEVERE; i++ {
 					lvl := tracy.LogLevel(i)
 					msg := fmt.Sprintf("test log at level %s", lvl)
-					log.Log(tracy.LogLevel(i), msg, props...)
+					log.Log(tracy.LogLevel(i), msg, testProps()...)
 					if i <= conf.MaxLevel {
-						if expected := format.FormatAndNormalize(lvl, msg, tracy.NewProps(props...)); tw.Last != expected {
+						if expected := format.FormatAndNormalize(lvl, msg, tracy.NewProps(testProps()...)); tw.Last != expected {
 							t.Error("wrong log at", lvl, tw.Last, expected)
 						}
 					} else {
@@ -127,7 +137,6 @@ func TestLogger(t *testing.T) {
 				Format:       format,
 				Output:       tw,
 			}
-			props := []tracy.Prop{{Name: SYSLOG_HOSTNAME, Value: hostname}, {Name: SYSLOG_APPNAME, Value: appname}, {Name: SYSLOG_TAG, Value: msgid}}
 			t.Run(name+" format", func(t *testing.T) {
 				conf.Format = format
 				log, err := tracy.NewLogger(conf)
@@ -137,9 +146,9 @@ func TestLogger(t *testing.T) {
 				for i := tracy.MOST_SEVERE; i < tracy.LEAST_SEVERE; i++ {
 					lvl := tracy.LogLevel(i)
 					msg := fmt.Sprintf("test log at level %s", lvl)
-					log.Log(tracy.LogLevel(i), msg, props...)
+					log.Log(tracy.LogLevel(i), msg, tracy.String(SYSLOG_HOSTNAME, hostname), tracy.String(SYSLOG_APPNAME, appname), tracy.String(SYSLOG_TAG, msgid))
 					if i <= conf.MaxLevel {
-						if expected := format.FormatAndNormalize(lvl, msg, tracy.NewProps(props...)); tw.Last != expected {
+						if expected := format.FormatAndNormalize(lvl, msg, tracy.NewProps(tracy.String(SYSLOG_HOSTNAME, hostname), tracy.String(SYSLOG_APPNAME, appname), tracy.String(SYSLOG_TAG, msgid))); tw.Last != expected {
 							t.Error("wrong log at", lvl, tw.Last, expected)
 						}
 					} else {
@@ -148,7 +157,6 @@ func TestLogger(t *testing.T) {
 						}
 					}
 					tw.Last = ""
-					t.Fail()
 				}
 			})
 		}
