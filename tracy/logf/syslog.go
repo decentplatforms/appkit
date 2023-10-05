@@ -23,8 +23,6 @@ import (
 	"github.com/decentplatforms/appkit/tracy"
 )
 
-type SDParam tracy.Prop
-
 type SDElement struct {
 	Name string
 }
@@ -136,7 +134,7 @@ func Syslog5424Format(conf SyslogConfig) tracy.Formatter {
 		pid = os.Getpid()
 
 		props.Delete(SYSLOG_HOSTNAME, SYSLOG_APPNAME, SYSLOG_TAG)
-		conf.WithProps(msg, props)
+		msg = conf.WithProps(msg, props)
 
 		return fmt.Sprintf("<%d>%d %s %s %s %d %s %s %s", pri, version, timestamp, hostname, appname, pid, msgid, structured, msg)
 	}
@@ -176,7 +174,7 @@ func Syslog3164Format(conf SyslogConfig) tracy.Formatter {
 		pri = 8*facility + int(level)
 
 		props.Delete(SYSLOG_HOSTNAME, SYSLOG_APPNAME, SYSLOG_TAG)
-		conf.WithProps(msg, props)
+		msg = conf.WithProps(msg, props)
 
 		return fmt.Sprintf("<%d>%s %s %s: %s", pri, timestamp, hostname, tag, msg)
 	}
