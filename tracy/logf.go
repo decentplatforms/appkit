@@ -74,6 +74,15 @@ func Float[T ~float64](name string, value T) Prop {
 	}
 }
 
+// Bool returns a prop whose value is a bool.
+// T may be any type that has an underlying type of bool.
+func Bool[T ~bool](name string, value T) Prop {
+	return Prop{
+		Name:  name,
+		Value: value,
+	}
+}
+
 // Props are an ordered collection of log properties.
 type Props struct {
 	props []Prop
@@ -147,6 +156,14 @@ func GetUInt[T ~uint | ~uint64](props *Props, name string, def T) T {
 
 // GetFloat gets a named float prop with default value def.
 func GetFloat[T ~float64](props *Props, name string, def T) T {
+	if v, ok := props.Get(name).(T); ok {
+		return v
+	}
+	return def
+}
+
+// GetBool gets a named bool prop with default value def.
+func GetBool[T ~bool](props *Props, name string, def T) T {
 	if v, ok := props.Get(name).(T); ok {
 		return v
 	}
