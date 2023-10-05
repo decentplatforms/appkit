@@ -22,7 +22,7 @@ import (
 )
 
 func TestFile(t *testing.T) {
-	writer, err := Open("../../dat/test.log", 100)
+	writer, err := Open("../cicd/test.log", 100)
 	if err != nil {
 		t.Fatal(err)
 	}

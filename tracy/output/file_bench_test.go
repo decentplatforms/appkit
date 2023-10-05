@@ -23,7 +23,7 @@ import (
 )
 
 func BenchmarkFile(b *testing.B) {
-	writer, err := Open("../../dat/test.log", 100)
+	writer, err := Open("../cicd/test.log", 100)
 	if err != nil {
 		b.Fatal(err)
 	}

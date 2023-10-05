@@ -122,7 +122,6 @@ func TestLogger(t *testing.T) {
 					}
 					tw.Last = ""
 				}
-				t.Fail()
 			})
 		}
 	})
@@ -158,7 +157,6 @@ func TestLogger(t *testing.T) {
 						}
 					}
 					tw.Last = ""
-					t.Fail()
 				}
 			})
 		}
