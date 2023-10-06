@@ -50,7 +50,7 @@ func JSONFormat(conf JSONConfig) tracy.Formatter {
 		raw, _ := json.Marshal(jsonLog{
 			Level:     level,
 			LevelStr:  level.String(),
-			Timestamp: time.Now().UTC().Format(time.RFC3339),
+			Timestamp: time.Now().UTC().Format(conf.TimeFormat),
 			Message:   msg,
 			Props:     props.Map(),
 		})
@@ -63,7 +63,7 @@ func JSONPrettyFormat(conf JSONConfig) tracy.Formatter {
 		raw, _ := json.MarshalIndent(jsonLog{
 			Level:     level,
 			LevelStr:  level.String(),
-			Timestamp: time.Now().UTC().Format(time.RFC3339),
+			Timestamp: time.Now().UTC().Format(conf.TimeFormat),
 			Message:   msg,
 			Props:     props.Map(),
 		}, conf.Prefix, conf.Indent)
