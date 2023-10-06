@@ -20,6 +20,7 @@ import (
 	"io"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/decentplatforms/appkit/tracy"
 )
@@ -40,8 +41,17 @@ func (writer *TestWriter) Write(msg []byte) (n int, err error) {
 var formats = map[string]tracy.Formatter{
 	"syslog_rfc3164": Syslog3164Format(SyslogConfig{}),
 	"syslog_rfc5424": Syslog5424Format(SyslogConfig{}),
-	"json":           JSONFormat(JSONConfig{}),
-	"json_pretty":    JSONPrettyFormat(JSONConfig{Indent: "  "}),
+	"json": JSONFormat(JSONConfig{
+		TimeFormat: time.RFC3339,
+	}),
+	"kv": KVFormat(KVConfig{
+		TimeFormat: time.RFC3339,
+	}),
+	"kv_single_quote": KVFormat(KVConfig{
+		TimeFormat:      time.RFC3339,
+		UseSingleQuotes: true,
+	}),
+	"json_pretty": JSONPrettyFormat(JSONConfig{Indent: "  ", TimeFormat: time.RFC3339}),
 }
 
 var syslog_formats = map[string]tracy.Formatter{
