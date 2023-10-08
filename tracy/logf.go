@@ -198,6 +198,10 @@ func (props *Props) Map() map[string]any {
 	return propsMap
 }
 
+func (props *Props) Slice() []Prop {
+	return props.props
+}
+
 func (props *Props) Return() {
 	clear(props.hash)
 	propsPool.Put(props)
