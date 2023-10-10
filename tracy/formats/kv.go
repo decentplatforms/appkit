@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/decentplatforms/appkit/tracy"
+	"github.com/decentplatforms/appkit/logf"
 )
 
 type KVConfig struct {
@@ -34,7 +34,7 @@ func (conf KVConfig) withDefaults() KVConfig {
 	return conf
 }
 
-func formatProps(props *tracy.Props, useSingleQuotes bool) string {
+func formatProps(props *logf.Props, useSingleQuotes bool) string {
 	if props == nil {
 		return ""
 	}
@@ -64,8 +64,8 @@ func formatProps(props *tracy.Props, useSingleQuotes bool) string {
 	return raw
 }
 
-func KVFormat(conf KVConfig) tracy.Formatter {
-	return func(level tracy.LogLevel, msg string, props *tracy.Props) string {
+func KVFormat(conf KVConfig) logf.Formatter {
+	return func(level logf.LogLevel, msg string, props *logf.Props) string {
 
 		timestamp := time.Now().UTC().Format(conf.TimeFormat)
 

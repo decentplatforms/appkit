@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tracy
+package logf
 
 // LogLevels denote log severity, with lower values being more severe
 // The native set of LogLevels follows syslog severity, from EMERGENCY/0 to DEBUG/7.

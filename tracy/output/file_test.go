@@ -17,8 +17,8 @@ package output
 import (
 	"testing"
 
-	"github.com/decentplatforms/appkit/tracy"
-	"github.com/decentplatforms/appkit/tracy/formats"
+	"github.com/decentplatforms/appkit/logf"
+	"github.com/decentplatforms/appkit/logf/formats"
 )
 
 func TestFile(t *testing.T) {
@@ -26,14 +26,14 @@ func TestFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	log, err := tracy.NewLogger(tracy.Config{
-		MaxLevel:     tracy.Debug,
-		DefaultLevel: tracy.Informational,
+	log, err := logf.NewLogger(logf.Config{
+		MaxLevel:     logf.Debug,
+		DefaultLevel: logf.Informational,
 		Format:       formats.Syslog5424Format(formats.SyslogConfig{Tag: "file-test"}),
 		Output:       writer,
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	log.Log(tracy.Informational, "test log")
+	log.Log(logf.Informational, "test log")
 }

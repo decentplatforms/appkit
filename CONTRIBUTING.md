@@ -72,7 +72,7 @@ Unversioned projects are the wild west. All contributions meeting the above are 
 Projects in appkit follow semantic versioning, formatted as `vX.Y.Z`, where X is major version, Y is minor version, and Z is patch number.
 
 - Major: The change is non-essential and breaks the existing API. Major changes are not currently being accepted.
-- Minor: The change doesn't break the existing API, but changes large portions of the internals of the library, or adds significant functionality to the API. Branch off of, and make pull requests to, a version branch like `tracy/v1.0.0`.
+- Minor: The change doesn't break the existing API, but changes large portions of the internals of the library, or adds significant functionality to the API. Branch off of, and make pull requests to, a version branch like `logf/v1.0.0`.
 - Patch: The change is a bugfix, minor performance improvement, minor API change, or auxilary component (like middleware). Branch off of, and make pull requests to, branch `main`.
 
 ### Deprecated Features

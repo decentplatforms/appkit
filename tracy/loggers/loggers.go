@@ -17,14 +17,14 @@ package loggers
 import (
 	"io"
 
-	"github.com/decentplatforms/appkit/tracy"
-	"github.com/decentplatforms/appkit/tracy/formats"
+	"github.com/decentplatforms/appkit/logf"
+	"github.com/decentplatforms/appkit/logf/formats"
 )
 
 // Syslog3164 returns a logger that logs to output with max level max and default level def.
 // Uses tag as the default tag; can be changed on a per-message basis using*Props.
-func Syslog3164(tag string, timeDetail bool, max, def tracy.LogLevel, output io.Writer) tracy.Logger {
-	logger, _ := tracy.NewLogger(tracy.Config{
+func Syslog3164(tag string, timeDetail bool, max, def logf.LogLevel, output io.Writer) logf.Logger {
+	logger, _ := logf.NewLogger(logf.Config{
 		MaxLevel:     max,
 		DefaultLevel: def,
 		Format: formats.Syslog3164Format(formats.SyslogConfig{
@@ -38,8 +38,8 @@ func Syslog3164(tag string, timeDetail bool, max, def tracy.LogLevel, output io.
 
 // Syslog5424 returns a logger that logs to output with max level max and default level def.
 // Uses app and msgid as defaults for those values; can be changed on a per-message basis using*Props.
-func Syslog5424(app, msgid string, max, def tracy.LogLevel, output io.Writer) tracy.Logger {
-	logger, _ := tracy.NewLogger(tracy.Config{
+func Syslog5424(app, msgid string, max, def logf.LogLevel, output io.Writer) logf.Logger {
+	logger, _ := logf.NewLogger(logf.Config{
 		MaxLevel:     max,
 		DefaultLevel: def,
 		Format: formats.Syslog5424Format(formats.SyslogConfig{
@@ -53,8 +53,8 @@ func Syslog5424(app, msgid string, max, def tracy.LogLevel, output io.Writer) tr
 
 // JSON returns a logger that logs to output with max level max and default level def.
 // Uses default JSONFormat settings.
-func JSON(max, def tracy.LogLevel, output io.Writer) tracy.Logger {
-	logger, _ := tracy.NewLogger(tracy.Config{
+func JSON(max, def logf.LogLevel, output io.Writer) logf.Logger {
+	logger, _ := logf.NewLogger(logf.Config{
 		MaxLevel:     max,
 		DefaultLevel: def,
 		Format:       formats.JSONFormat(formats.JSONConfig{}),
@@ -65,8 +65,8 @@ func JSON(max, def tracy.LogLevel, output io.Writer) tracy.Logger {
 
 // JSON returns a logger that logs to output with max level max and default level def.
 // Uses default JSONFormat settings plus the specified indent. If left empty, indents with tabs.
-func JSONPretty(indent string, max, def tracy.LogLevel, output io.Writer) tracy.Logger {
-	logger, _ := tracy.NewLogger(tracy.Config{
+func JSONPretty(indent string, max, def logf.LogLevel, output io.Writer) logf.Logger {
+	logger, _ := logf.NewLogger(logf.Config{
 		MaxLevel:     max,
 		DefaultLevel: def,
 		Format:       formats.JSONPrettyFormat(formats.JSONConfig{Indent: indent}),
