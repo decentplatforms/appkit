@@ -18,7 +18,7 @@ import (
 	"io"
 
 	"github.com/decentplatforms/appkit/tracy"
-	"github.com/decentplatforms/appkit/tracy/logf"
+	"github.com/decentplatforms/appkit/tracy/formats"
 )
 
 // Syslog3164 returns a logger that logs to output with max level max and default level def.
@@ -27,7 +27,7 @@ func Syslog3164(tag string, timeDetail bool, max, def tracy.LogLevel, output io.
 	logger, _ := tracy.NewLogger(tracy.Config{
 		MaxLevel:     max,
 		DefaultLevel: def,
-		Format: logf.Syslog3164Format(logf.SyslogConfig{
+		Format: formats.Syslog3164Format(formats.SyslogConfig{
 			Tag:        tag,
 			UseISO8601: timeDetail,
 		}),
@@ -42,7 +42,7 @@ func Syslog5424(app, msgid string, max, def tracy.LogLevel, output io.Writer) tr
 	logger, _ := tracy.NewLogger(tracy.Config{
 		MaxLevel:     max,
 		DefaultLevel: def,
-		Format: logf.Syslog5424Format(logf.SyslogConfig{
+		Format: formats.Syslog5424Format(formats.SyslogConfig{
 			AppName: app,
 			Tag:     msgid,
 		}),
@@ -57,7 +57,7 @@ func JSON(max, def tracy.LogLevel, output io.Writer) tracy.Logger {
 	logger, _ := tracy.NewLogger(tracy.Config{
 		MaxLevel:     max,
 		DefaultLevel: def,
-		Format:       logf.JSONFormat(logf.JSONConfig{}),
+		Format:       formats.JSONFormat(formats.JSONConfig{}),
 		Output:       output,
 	})
 	return logger
@@ -69,7 +69,7 @@ func JSONPretty(indent string, max, def tracy.LogLevel, output io.Writer) tracy.
 	logger, _ := tracy.NewLogger(tracy.Config{
 		MaxLevel:     max,
 		DefaultLevel: def,
-		Format:       logf.JSONPrettyFormat(logf.JSONConfig{Indent: indent}),
+		Format:       formats.JSONPrettyFormat(formats.JSONConfig{Indent: indent}),
 		Output:       output,
 	})
 	return logger

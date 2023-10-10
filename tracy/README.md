@@ -25,7 +25,7 @@ if err != nil {
 ### Advanced
 
 ```go
-format := logf.Syslog3164Format(SyslogConfig{
+format := formats.Syslog3164Format(SyslogConfig{
     AppName: "app",
     Tag: "tag",
 })

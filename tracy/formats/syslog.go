@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package logf
+package formats
 
 import (
 	"encoding/json"
@@ -39,7 +39,7 @@ const (
 //   - Tag is used as MSGID in 5424
 //   - UseISO8601 only applies to RFC 3164; rfc5424 specifies RFC3339 time
 //   - You may not set Facility to 0
-//   - WithProps uses logf.SyslogKV by default.
+//   - WithProps uses formats.SyslogKV by default.
 type SyslogConfig struct {
 	Hostname   string
 	AppName    string

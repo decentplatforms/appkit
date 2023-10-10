@@ -1,4 +1,4 @@
-package logf
+package formats
 
 import (
 	"errors"

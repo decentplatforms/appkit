@@ -19,7 +19,7 @@ import (
 	"testing"
 
 	"github.com/decentplatforms/appkit/tracy"
-	"github.com/decentplatforms/appkit/tracy/logf"
+	"github.com/decentplatforms/appkit/tracy/formats"
 )
 
 func BenchmarkFile(b *testing.B) {
@@ -30,7 +30,7 @@ func BenchmarkFile(b *testing.B) {
 	conf := tracy.Config{
 		MaxLevel:     tracy.Debug,
 		DefaultLevel: tracy.Informational,
-		Format:       logf.Syslog5424Format(logf.SyslogConfig{Tag: "file-bench"}),
+		Format:       formats.Syslog5424Format(formats.SyslogConfig{Tag: "file-bench"}),
 		Output:       writer,
 	}
 	log, err := tracy.NewLogger(conf)
