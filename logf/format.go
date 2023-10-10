@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tracy
+package logf
 
 import (
 	"fmt"
@@ -29,7 +29,7 @@ type Prop struct {
 // String returns a prop whose value is a string.
 // T may be any type that has an underlying type of string.
 //
-// If you need to use a fmt.Stringer, use tracy.Stringer.
+// If you need to use a fmt.Stringer, use logf.Stringer.
 func String[T ~string](name string, value T) Prop {
 	return Prop{
 		Name:  name,

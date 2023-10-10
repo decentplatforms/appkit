@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package logf
+package formats
 
 import (
 	"errors"
@@ -20,7 +20,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/decentplatforms/appkit/tracy"
+	"github.com/decentplatforms/appkit/logf"
 )
 
 type TestWriter struct {
@@ -36,7 +36,7 @@ func (writer *TestWriter) Write(msg []byte) (n int, err error) {
 	return len(msg), nil
 }
 
-var formats = map[string]tracy.Formatter{
+var formats = map[string]logf.Formatter{
 	"syslog_rfc3164": Syslog3164Format(SyslogConfig{}),
 	"syslog_rfc5424": Syslog5424Format(SyslogConfig{}),
 	"json": JSONFormat(JSONConfig{
@@ -52,11 +52,11 @@ var formats = map[string]tracy.Formatter{
 	"json_pretty": JSONPrettyFormat(JSONConfig{Indent: "  ", TimeFormat: time.RFC3339}),
 }
 
-func testProps() []tracy.Prop {
-	return []tracy.Prop{
-		tracy.String("property", "value"),
-		tracy.Int("num1", 1),
-		tracy.Float("num2", 2.0),
+func testProps() []logf.Prop {
+	return []logf.Prop{
+		logf.String("property", "value"),
+		logf.Int("num1", 1),
+		logf.Float("num2", 2.0),
 	}
 }
 
@@ -64,24 +64,24 @@ func TestLogger(t *testing.T) {
 	t.Run("default logger", func(t *testing.T) {
 		for name, format := range formats {
 			tw := &TestWriter{}
-			conf := tracy.Config{
-				MaxLevel:     tracy.Warning,
-				DefaultLevel: tracy.Informational,
+			conf := logf.Config{
+				MaxLevel:     logf.Warning,
+				DefaultLevel: logf.Informational,
 				Format:       format,
 				Output:       tw,
 			}
 			t.Run(name+" format", func(t *testing.T) {
 				conf.Format = format
-				log, err := tracy.NewLogger(conf)
+				log, err := logf.NewLogger(conf)
 				if err != nil {
 					t.Fatal(err)
 				}
-				for i := tracy.MOST_SEVERE; i < tracy.LEAST_SEVERE; i++ {
-					lvl := tracy.LogLevel(i)
+				for i := logf.MOST_SEVERE; i < logf.LEAST_SEVERE; i++ {
+					lvl := logf.LogLevel(i)
 					msg := fmt.Sprintf("test log at level %s", lvl)
-					log.Log(tracy.LogLevel(i), msg)
+					log.Log(logf.LogLevel(i), msg)
 					if i <= conf.MaxLevel {
-						if expected := format.FormatAndNormalize(lvl, msg, tracy.NewProps()); tw.Last != expected {
+						if expected := format.FormatAndNormalize(lvl, msg, logf.NewProps()); tw.Last != expected {
 							t.Error("wrong log at", lvl, tw.Last, expected)
 						}
 					} else {
@@ -97,24 +97,24 @@ func TestLogger(t *testing.T) {
 	t.Run("with props", func(t *testing.T) {
 		for name, format := range formats {
 			tw := &TestWriter{}
-			conf := tracy.Config{
-				MaxLevel:     tracy.Warning,
-				DefaultLevel: tracy.Informational,
+			conf := logf.Config{
+				MaxLevel:     logf.Warning,
+				DefaultLevel: logf.Informational,
 				Format:       format,
 				Output:       tw,
 			}
 			t.Run(name+" format", func(t *testing.T) {
 				conf.Format = format
-				log, err := tracy.NewLogger(conf)
+				log, err := logf.NewLogger(conf)
 				if err != nil {
 					t.Fatal(err)
 				}
-				for i := tracy.MOST_SEVERE; i < tracy.LEAST_SEVERE; i++ {
-					lvl := tracy.LogLevel(i)
+				for i := logf.MOST_SEVERE; i < logf.LEAST_SEVERE; i++ {
+					lvl := logf.LogLevel(i)
 					msg := fmt.Sprintf("test log at level %s", lvl)
-					log.Log(tracy.LogLevel(i), msg, testProps()...)
+					log.Log(logf.LogLevel(i), msg, testProps()...)
 					if i <= conf.MaxLevel {
-						if expected := format.FormatAndNormalize(lvl, msg, tracy.NewProps(testProps()...)); tw.Last != expected {
+						if expected := format.FormatAndNormalize(lvl, msg, logf.NewProps(testProps()...)); tw.Last != expected {
 							t.Error("wrong log at", lvl, tw.Last, expected)
 						}
 					} else {

@@ -4,7 +4,7 @@ appkit is a collection of helpful modules for building applications in Go.
 
 ## Tools
 
-- `tracy`: Application logging
+- `logf`: Application logging
 
 ## Installation and Usage
 

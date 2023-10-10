@@ -12,12 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tracy
+package logf
 
-import "errors"
+var active Logger
 
-var NilOutputError = errors.New("loggers must have a non-nil output")
-var NilFormatError = errors.New("loggers must have a format")
-var MultiConfigError = errors.New("can't configure MultiLogger; configure subloggers instead")
+func Use(log Logger) {
+	active = log
+}
 
-var NoActiveLoggerError = errors.New("no active logger")
+func Log(level LogLevel, message string, props ...Prop) error {
+	if active == nil {
+		return NoActiveLoggerError
+	}
+	return active.Log(level, message, props...)
+}

@@ -18,7 +18,7 @@ import (
 	"errors"
 	"os"
 
-	"github.com/decentplatforms/appkit/tracy"
+	"github.com/decentplatforms/appkit/logf"
 )
 
 type TestWriter struct {
@@ -34,11 +34,11 @@ func (writer *TestWriter) Write(msg []byte) (n int, err error) {
 	return len(msg), nil
 }
 
-var loggers = map[string]tracy.Logger{
-	"syslog_rfc3164": Syslog3164("log-test", true, tracy.Informational, tracy.Informational, os.Stdout),
-	"syslog_rfc5424": Syslog5424("log-test", "log", tracy.Informational, tracy.Informational, os.Stdout),
-	"json":           JSON(tracy.Informational, tracy.Informational, os.Stdout),
-	"json_pretty":    JSONPretty("  ", tracy.Informational, tracy.Informational, os.Stdout),
+var loggers = map[string]logf.Logger{
+	"syslog_rfc3164": Syslog3164("log-test", true, logf.Informational, logf.Informational, os.Stdout),
+	"syslog_rfc5424": Syslog5424("log-test", "log", logf.Informational, logf.Informational, os.Stdout),
+	"json":           JSON(logf.Informational, logf.Informational, os.Stdout),
+	"json_pretty":    JSONPretty("  ", logf.Informational, logf.Informational, os.Stdout),
 }
 
 // TODO: test loggers

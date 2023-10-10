@@ -12,17 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tracy
+package logf
 
-var active Logger
+import (
+	"io"
+)
 
-func Use(log Logger) {
-	active = log
-}
-
-func Log(level LogLevel, message string, props ...Prop) error {
-	if active == nil {
-		return NoActiveLoggerError
-	}
-	return active.Log(level, message, props...)
+type Config struct {
+	MaxLevel     LogLevel
+	DefaultLevel LogLevel
+	Format       Formatter
+	Output       io.Writer
 }

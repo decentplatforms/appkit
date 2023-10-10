@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tracy
+package logf
 
-import (
-	"io"
-)
+import "errors"
 
-type Config struct {
-	MaxLevel     LogLevel
-	DefaultLevel LogLevel
-	Format       Formatter
-	Output       io.Writer
-}
+var NilOutputError = errors.New("loggers must have a non-nil output")
+var NilFormatError = errors.New("loggers must have a format")
+var MultiConfigError = errors.New("can't configure MultiLogger; configure subloggers instead")
+
+var NoActiveLoggerError = errors.New("no active logger")

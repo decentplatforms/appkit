@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package logf
+package formats
 
 import (
 	"encoding/json"
@@ -20,7 +20,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/decentplatforms/appkit/tracy"
+	"github.com/decentplatforms/appkit/logf"
 )
 
 type SDElement struct {
@@ -39,19 +39,19 @@ const (
 //   - Tag is used as MSGID in 5424
 //   - UseISO8601 only applies to RFC 3164; rfc5424 specifies RFC3339 time
 //   - You may not set Facility to 0
-//   - WithProps uses logf.SyslogKV by default.
+//   - WithProps uses formats.SyslogKV by default.
 type SyslogConfig struct {
 	Hostname   string
 	AppName    string
 	Tag        string
 	Facility   int
 	UseISO8601 bool
-	WithProps  func(string, *tracy.Props) string
+	WithProps  func(string, *logf.Props) string
 }
 
 // SyslogJSON is an option for SyslogConfig.WithProps.
 // It appends spare props as JSON to the syslog message.
-func SyslogJSON(msg string, props *tracy.Props) string {
+func SyslogJSON(msg string, props *logf.Props) string {
 	spareProps := props.Map()
 	if len(spareProps) > 0 {
 		raw, err := json.Marshal(spareProps)
@@ -62,13 +62,13 @@ func SyslogJSON(msg string, props *tracy.Props) string {
 	return msg
 }
 
-func SyslogKV(msg string, props *tracy.Props) string {
+func SyslogKV(msg string, props *logf.Props) string {
 	return msg + " " + formatProps(props, false)
 }
 
 // SyslogIgnore is an option for SyslogConfig.WithProps.
 // It ignores spare props, leaving the message as-is.
-func SyslogIgnore(msg string, props *tracy.Props) string {
+func SyslogIgnore(msg string, props *logf.Props) string {
 	return msg
 }
 
@@ -105,9 +105,9 @@ func (conf SyslogConfig) withDefaults() SyslogConfig {
 //   - Facility is conf.Facility or User (1) and may not be 0
 //   - Version is 1
 //   - Structured Data is -. Support for this field is planned.
-func Syslog5424Format(conf SyslogConfig) tracy.Formatter {
+func Syslog5424Format(conf SyslogConfig) logf.Formatter {
 	conf = conf.withDefaults()
-	return func(level tracy.LogLevel, msg string, props *tracy.Props) string {
+	return func(level logf.LogLevel, msg string, props *logf.Props) string {
 		var timestamp, hostname, appname, msgid, structured string
 		var facility, pri, version, pid int
 		var ok bool
@@ -151,9 +151,9 @@ func Syslog5424Format(conf SyslogConfig) tracy.Formatter {
 //   - Facility is User (1)
 //
 // Spare props are appended to MSG as JSON.
-func Syslog3164Format(conf SyslogConfig) tracy.Formatter {
+func Syslog3164Format(conf SyslogConfig) logf.Formatter {
 	conf = conf.withDefaults()
-	return func(level tracy.LogLevel, msg string, props *tracy.Props) string {
+	return func(level logf.LogLevel, msg string, props *logf.Props) string {
 		var timestamp, hostname, tag string
 		var facility, pri int
 		var ok bool

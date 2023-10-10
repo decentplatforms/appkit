@@ -1,4 +1,4 @@
-package logf
+package formats
 
 import (
 	"errors"
@@ -6,11 +6,11 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/decentplatforms/appkit/tracy"
-	"github.com/decentplatforms/appkit/tracy/testhelp"
+	"github.com/decentplatforms/appkit/logf"
+	"github.com/decentplatforms/appkit/logf/testhelp"
 )
 
-var syslog_formats = map[string]tracy.Formatter{
+var syslog_formats = map[string]logf.Formatter{
 	"syslog_rfc3164": Syslog3164Format(SyslogConfig{
 		Hostname: "test-host",
 		Tag:      "test-log",
@@ -73,9 +73,9 @@ var syslog_expects = map[string]testhelp.ResultsMap{
 	},
 }
 
-var syslog_custom_props = map[string][]tracy.Prop{
-	"syslog_rfc3164": {tracy.String(SYSLOG_HOSTNAME, "custom-host"), tracy.String(SYSLOG_TAG, "custom-log")},
-	"syslog_rfc5424": {tracy.String(SYSLOG_HOSTNAME, "custom-host"), tracy.String(SYSLOG_APPNAME, "custom-app"), tracy.String(SYSLOG_TAG, "custom-log")},
+var syslog_custom_props = map[string][]logf.Prop{
+	"syslog_rfc3164": {logf.String(SYSLOG_HOSTNAME, "custom-host"), logf.String(SYSLOG_TAG, "custom-log")},
+	"syslog_rfc5424": {logf.String(SYSLOG_HOSTNAME, "custom-host"), logf.String(SYSLOG_APPNAME, "custom-app"), logf.String(SYSLOG_TAG, "custom-log")},
 }
 
 var syslog_custom_expects = map[string]testhelp.ResultsMap{
@@ -126,16 +126,16 @@ func TestSyslog(t *testing.T) {
 	for name, format := range syslog_formats {
 		t.Run(name, func(t *testing.T) {
 			tw := &TestWriter{}
-			conf := tracy.Config{
-				MaxLevel: tracy.Informational,
+			conf := logf.Config{
+				MaxLevel: logf.Informational,
 				Format:   format,
 				Output:   tw,
 			}
-			log, err := tracy.NewLogger(conf)
+			log, err := logf.NewLogger(conf)
 			if err != nil {
 				t.Fatal(err)
 			}
-			err = log.Log(tracy.Informational, "test log", tracy.String("detail", "testing format using regex"))
+			err = log.Log(logf.Informational, "test log", logf.String("detail", "testing format using regex"))
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -151,17 +151,17 @@ func TestSyslog(t *testing.T) {
 		})
 		t.Run(name+"-custom", func(t *testing.T) {
 			tw := &TestWriter{}
-			conf := tracy.Config{
-				MaxLevel: tracy.Informational,
+			conf := logf.Config{
+				MaxLevel: logf.Informational,
 				Format:   format,
 				Output:   tw,
 			}
-			log, err := tracy.NewLogger(conf)
+			log, err := logf.NewLogger(conf)
 			if err != nil {
 				t.Fatal(err)
 			}
-			props := append(testhelp.GetTestOption(syslog_custom_props, name, nil), tracy.String("detail", "testing with custom props"))
-			err = log.Log(tracy.Informational, "test log", props...)
+			props := append(testhelp.GetTestOption(syslog_custom_props, name, nil), logf.String("detail", "testing with custom props"))
+			err = log.Log(logf.Informational, "test log", props...)
 			if err != nil {
 				t.Fatal(err)
 			}

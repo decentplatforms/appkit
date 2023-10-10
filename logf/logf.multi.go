@@ -12,28 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package output
+package logf
 
 import (
-	"testing"
-
-	"github.com/decentplatforms/appkit/tracy"
-	"github.com/decentplatforms/appkit/tracy/logf"
+	"errors"
 )
 
-func TestFile(t *testing.T) {
-	writer, err := Open("../cicd/test.log", 100)
-	if err != nil {
-		t.Fatal(err)
+type multiLogger struct {
+	logs []Logger
+}
+
+func (log *multiLogger) Configure(conf Config) error {
+	return MultiConfigError
+}
+
+func (log *multiLogger) Log(level LogLevel, msg string, props ...Prop) error {
+	var err error
+	for _, log := range log.logs {
+		logErr := log.Log(level, msg, props...)
+		errors.Join(err, logErr)
 	}
-	log, err := tracy.NewLogger(tracy.Config{
-		MaxLevel:     tracy.Debug,
-		DefaultLevel: tracy.Informational,
-		Format:       logf.Syslog5424Format(logf.SyslogConfig{Tag: "file-test"}),
-		Output:       writer,
-	})
-	if err != nil {
-		t.Fatal(err)
+	return err
+}
+
+func (log *multiLogger) Write(msg []byte) (n int, err error) {
+	for _, log := range log.logs {
+		_, logErr := log.Write(msg)
+		errors.Join(err, logErr)
 	}
-	log.Log(tracy.Informational, "test log")
+	return len(msg), err
 }

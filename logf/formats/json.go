@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package logf
+package formats
 
 import (
 	"encoding/json"
 	"time"
 
-	"github.com/decentplatforms/appkit/tracy"
+	"github.com/decentplatforms/appkit/logf"
 )
 
 type jsonLog struct {
-	Level     tracy.LogLevel `json:"level"`
+	Level     logf.LogLevel  `json:"level"`
 	LevelStr  string         `json:"level_str"`
 	Timestamp string         `json:"timestamp"`
 	Message   string         `json:"message"`
@@ -45,8 +45,8 @@ func (conf JSONConfig) withDefaults() JSONConfig {
 	return conf
 }
 
-func JSONFormat(conf JSONConfig) tracy.Formatter {
-	return func(level tracy.LogLevel, msg string, props *tracy.Props) string {
+func JSONFormat(conf JSONConfig) logf.Formatter {
+	return func(level logf.LogLevel, msg string, props *logf.Props) string {
 		raw, _ := json.Marshal(jsonLog{
 			Level:     level,
 			LevelStr:  level.String(),
@@ -58,8 +58,8 @@ func JSONFormat(conf JSONConfig) tracy.Formatter {
 	}
 }
 
-func JSONPrettyFormat(conf JSONConfig) tracy.Formatter {
-	return func(level tracy.LogLevel, msg string, props *tracy.Props) string {
+func JSONPrettyFormat(conf JSONConfig) logf.Formatter {
+	return func(level logf.LogLevel, msg string, props *logf.Props) string {
 		raw, _ := json.MarshalIndent(jsonLog{
 			Level:     level,
 			LevelStr:  level.String(),
