@@ -1,6 +1,9 @@
 # logf
 
-Tracy is a basic application logging tool. It covers common log formats, such as syslog and JSON, and can be used through a custom logf.Log API or as a raw io.Writer.
+`appkit/logf` is a tool for formatted, deterministic application logging.
+
+- Formatted: logf provides extensible formatting tools, and supports structured (kvp, json) and non-structured (both standard syslog RFCs) out-of-the-box
+- Deterministic: The same input properties always result in the same log message output
 
 ## Installation
 
@@ -10,19 +13,18 @@ Tracy is a basic application logging tool. It covers common log formats, such as
 
 All examples below log messages using the RFC 3164 syslog format.
 
-### Basic
+Create a logger using `package loggers` (arguments vary by format):
 
 ```go
-log := loggers.Syslog3164("tag", true, logf.Warning, logf.Informational, os.Stdout)
-logf.Use(log)
-...
-err := someOperation()
-if err != nil {
-    logf.Log(logf.Error, "something bad is happening!", logf.Prop{Name: "detail", Value: err})
-}
+syslogTag := "application"
+useTimeDetail := true
+maxLevel := logf.Warning
+defaultLevel := logf.Informational
+output := os.Stdout
+log := loggers.Syslog3164(syslogTag, useTimeDetail, maxLevel, defaultLevel, output)
 ```
 
-### Advanced
+or by using a custom configuration:
 
 ```go
 format := formats.Syslog3164Format(SyslogConfig{
@@ -39,20 +41,26 @@ log, err := logf.NewLogger(conf)
 if err != nil {
     panic(err)
 }
-logf.Use(log)
-...
 ```
 
-### As Writer
-
-Here, someOperation takes an `errorLogger io.Writer` as input to write errors to. We'll make a writer that defaults to `logf.Error`.
+Log messages using `Logger.Log`:
 
 ```go
-errorLogger := loggers.Syslog3164("log-test", true, logf.Warning, logf.Error, os.Stdout)
-err := someOperation(errorLogger)
+// Log with only a message...
+log.Log(logf.Informational, "test log message!")
+// ...or with additional properties.
+log.Log(logf.Informational, "test log message!", tracy.String("detail", "extra detail here"))
 ```
 
-This provides a little less control over log content but makes it easier to integrate with systems that expect an io.Writer instead of a logf.Logger.
+Treatment of additional properties depends on the format.
+
+## As Writer
+
+Loggers are an `io.Writer`, so you can `Logger.Write(msg []byte)` to write the message with the logger's default level.
+
+```go
+log.Write([]byte("test log message!"))
+```
 
 ## Contributing
 
