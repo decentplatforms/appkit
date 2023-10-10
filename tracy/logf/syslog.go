@@ -39,7 +39,7 @@ const (
 //   - Tag is used as MSGID in 5424
 //   - UseISO8601 only applies to RFC 3164; rfc5424 specifies RFC3339 time
 //   - You may not set Facility to 0
-//   - WithProps uses logf.SyslogJSON by default.
+//   - WithProps uses logf.SyslogKV by default.
 type SyslogConfig struct {
 	Hostname   string
 	AppName    string
@@ -60,6 +60,10 @@ func SyslogJSON(msg string, props *tracy.Props) string {
 		}
 	}
 	return msg
+}
+
+func SyslogKV(msg string, props *tracy.Props) string {
+	return msg + " " + formatProps(props, false)
 }
 
 // SyslogIgnore is an option for SyslogConfig.WithProps.
@@ -87,7 +91,7 @@ func (conf SyslogConfig) withDefaults() SyslogConfig {
 		conf.Facility = 1
 	}
 	if conf.WithProps == nil {
-		conf.WithProps = SyslogJSON
+		conf.WithProps = SyslogKV
 	}
 	return conf
 }

@@ -16,6 +16,7 @@ package tracy
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 )
@@ -183,9 +184,18 @@ func (props *Props) Set(prop Prop) {
 // This doesn't clear the data from memory, but removes its hash value so that it cannot be accessed
 // through Get/Map.
 func (props *Props) Delete(propnames ...string) {
-	for _, name := range propnames {
-		delete(props.hash, name)
+	newProps := make([]Prop, len(props.props))
+	i := 0
+	for _, prop := range props.props {
+		if slices.Contains(propnames, prop.Name) {
+			delete(props.hash, prop.Name)
+		} else {
+			newProps[i] = prop
+			props.hash[prop.Name] = i
+			i++
+		}
 	}
+	props.props = newProps[:i]
 }
 
 // Map returns a map of key-value pairs.

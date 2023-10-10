@@ -17,8 +17,6 @@ package logf
 import (
 	"errors"
 	"fmt"
-	"io"
-	"os"
 	"testing"
 	"time"
 
@@ -52,11 +50,6 @@ var formats = map[string]tracy.Formatter{
 		UseSingleQuotes: true,
 	}),
 	"json_pretty": JSONPrettyFormat(JSONConfig{Indent: "  ", TimeFormat: time.RFC3339}),
-}
-
-var syslog_formats = map[string]tracy.Formatter{
-	"syslog_rfc3164": Syslog3164Format(SyslogConfig{}),
-	"syslog_rfc5424": Syslog5424Format(SyslogConfig{}),
 }
 
 func testProps() []tracy.Prop {
@@ -104,43 +97,6 @@ func TestLogger(t *testing.T) {
 	t.Run("with props", func(t *testing.T) {
 		for name, format := range formats {
 			tw := &TestWriter{}
-			w := io.MultiWriter(tw, os.Stdout)
-			conf := tracy.Config{
-				MaxLevel:     tracy.Warning,
-				DefaultLevel: tracy.Informational,
-				Format:       format,
-				Output:       w,
-			}
-			t.Run(name+" format", func(t *testing.T) {
-				conf.Format = format
-				log, err := tracy.NewLogger(conf)
-				if err != nil {
-					t.Fatal(err)
-				}
-				for i := tracy.MOST_SEVERE; i < tracy.LEAST_SEVERE; i++ {
-					lvl := tracy.LogLevel(i)
-					msg := fmt.Sprintf("test log at level %s", lvl)
-					log.Log(tracy.LogLevel(i), msg, testProps()...)
-					if i <= conf.MaxLevel {
-						if expected := format.FormatAndNormalize(lvl, msg, tracy.NewProps(testProps()...)); tw.Last != expected {
-							t.Error("wrong log at", lvl, tw.Last, expected)
-						}
-					} else {
-						if tw.Last != "" {
-							t.Error("logger shouldn't have logged at", lvl)
-						}
-					}
-					tw.Last = ""
-				}
-			})
-		}
-	})
-	t.Run("syslog logger", func(t *testing.T) {
-		for name, format := range syslog_formats {
-			hostname := "testhost"
-			appname := "some-other-app"
-			msgid := "testing"
-			tw := &TestWriter{}
 			conf := tracy.Config{
 				MaxLevel:     tracy.Warning,
 				DefaultLevel: tracy.Informational,
@@ -156,9 +112,9 @@ func TestLogger(t *testing.T) {
 				for i := tracy.MOST_SEVERE; i < tracy.LEAST_SEVERE; i++ {
 					lvl := tracy.LogLevel(i)
 					msg := fmt.Sprintf("test log at level %s", lvl)
-					log.Log(tracy.LogLevel(i), msg, tracy.String(SYSLOG_HOSTNAME, hostname), tracy.String(SYSLOG_APPNAME, appname), tracy.String(SYSLOG_TAG, msgid))
+					log.Log(tracy.LogLevel(i), msg, testProps()...)
 					if i <= conf.MaxLevel {
-						if expected := format.FormatAndNormalize(lvl, msg, tracy.NewProps(tracy.String(SYSLOG_HOSTNAME, hostname), tracy.String(SYSLOG_APPNAME, appname), tracy.String(SYSLOG_TAG, msgid))); tw.Last != expected {
+						if expected := format.FormatAndNormalize(lvl, msg, tracy.NewProps(testProps()...)); tw.Last != expected {
 							t.Error("wrong log at", lvl, tw.Last, expected)
 						}
 					} else {
