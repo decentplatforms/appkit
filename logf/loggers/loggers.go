@@ -74,3 +74,15 @@ func JSONPretty(indent string, max, def logf.LogLevel, output io.Writer) logf.Lo
 	})
 	return logger
 }
+
+// KV returns a logger that logs to output with max level max and default level def.
+// Uses the given KVFormat settings.
+func KV(conf formats.KVConfig, max, def logf.LogLevel, output io.Writer) logf.Logger {
+	logger, _ := logf.NewLogger(logf.Config{
+		MaxLevel:     max,
+		DefaultLevel: def,
+		Format:       formats.KVFormat(conf),
+		Output:       output,
+	})
+	return logger
+}

@@ -19,6 +19,7 @@ import (
 	"os"
 
 	"github.com/decentplatforms/appkit/logf"
+	"github.com/decentplatforms/appkit/logf/formats"
 )
 
 type TestWriter struct {
@@ -39,6 +40,7 @@ var loggers = map[string]logf.Logger{
 	"syslog_rfc5424": Syslog5424("log-test", "log", logf.Informational, logf.Informational, os.Stdout),
 	"json":           JSON(logf.Informational, logf.Informational, os.Stdout),
 	"json_pretty":    JSONPretty("  ", logf.Informational, logf.Informational, os.Stdout),
+	"kv":             KV(formats.KVConfig{}, logf.Informational, logf.Informational, os.Stdout),
 }
 
 // TODO: test loggers
