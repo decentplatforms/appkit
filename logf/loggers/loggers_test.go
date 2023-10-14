@@ -36,11 +36,13 @@ func (writer *TestWriter) Write(msg []byte) (n int, err error) {
 }
 
 var loggers = map[string]logf.Logger{
-	"syslog_rfc3164": Syslog3164("log-test", true, logf.Informational, logf.Informational, os.Stdout),
-	"syslog_rfc5424": Syslog5424("log-test", "log", logf.Informational, logf.Informational, os.Stdout),
-	"json":           JSON(logf.Informational, logf.Informational, os.Stdout),
-	"json_pretty":    JSONPretty("  ", logf.Informational, logf.Informational, os.Stdout),
-	"kv":             KV(formats.KVConfig{}, logf.Informational, logf.Informational, os.Stdout),
+	"syslog_rfc3164": Syslog3164(formats.SyslogConfig{Tag: "log-test", UseISO8601: true},
+		logf.Informational, logf.Informational, os.Stdout),
+	"syslog_rfc5424": Syslog5424(formats.SyslogConfig{AppName: "log-test", Tag: "log"},
+		logf.Informational, logf.Informational, os.Stdout),
+	"json":        JSON(logf.Informational, logf.Informational, os.Stdout),
+	"json_pretty": JSONPretty(formats.JSONConfig{Indent: "  "}, logf.Informational, logf.Informational, os.Stdout),
+	"kv":          KV(formats.KVConfig{}, logf.Informational, logf.Informational, os.Stdout),
 }
 
 // TODO: test loggers

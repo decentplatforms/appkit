@@ -22,31 +22,25 @@ import (
 )
 
 // Syslog3164 returns a logger that logs to output with max level max and default level def.
-// Uses tag as the default tag; can be changed on a per-message basis using*Props.
-func Syslog3164(tag string, timeDetail bool, max, def logf.LogLevel, output io.Writer) logf.Logger {
+// Uses the given Syslog3164Format settings.
+func Syslog3164(conf formats.SyslogConfig, max, def logf.LogLevel, output io.Writer) logf.Logger {
 	logger, _ := logf.NewLogger(logf.Config{
 		MaxLevel:     max,
 		DefaultLevel: def,
-		Format: formats.Syslog3164Format(formats.SyslogConfig{
-			Tag:        tag,
-			UseISO8601: timeDetail,
-		}),
-		Output: output,
+		Format:       formats.Syslog3164Format(conf),
+		Output:       output,
 	})
 	return logger
 }
 
 // Syslog5424 returns a logger that logs to output with max level max and default level def.
-// Uses app and msgid as defaults for those values; can be changed on a per-message basis using*Props.
-func Syslog5424(app, msgid string, max, def logf.LogLevel, output io.Writer) logf.Logger {
+// Uses the given Syslog5424Format settings.
+func Syslog5424(conf formats.SyslogConfig, max, def logf.LogLevel, output io.Writer) logf.Logger {
 	logger, _ := logf.NewLogger(logf.Config{
 		MaxLevel:     max,
 		DefaultLevel: def,
-		Format: formats.Syslog5424Format(formats.SyslogConfig{
-			AppName: app,
-			Tag:     msgid,
-		}),
-		Output: output,
+		Format:       formats.Syslog5424Format(conf),
+		Output:       output,
 	})
 	return logger
 }
@@ -64,12 +58,12 @@ func JSON(max, def logf.LogLevel, output io.Writer) logf.Logger {
 }
 
 // JSON returns a logger that logs to output with max level max and default level def.
-// Uses default JSONFormat settings plus the specified indent. If left empty, indents with tabs.
-func JSONPretty(indent string, max, def logf.LogLevel, output io.Writer) logf.Logger {
+// Uses the given JSONFormat settings.
+func JSONPretty(conf formats.JSONConfig, max, def logf.LogLevel, output io.Writer) logf.Logger {
 	logger, _ := logf.NewLogger(logf.Config{
 		MaxLevel:     max,
 		DefaultLevel: def,
-		Format:       formats.JSONPrettyFormat(formats.JSONConfig{Indent: indent}),
+		Format:       formats.JSONPrettyFormat(conf),
 		Output:       output,
 	})
 	return logger
